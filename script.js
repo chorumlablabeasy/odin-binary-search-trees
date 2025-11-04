@@ -131,11 +131,13 @@ class Tree {
       let successor = currentNode.right
       let successorParent = currentNode
 
+      // Ağaçta gez ve successor elemanı bul
       while (successor.left) {
         successorParent = successor
         successor = successor.left
       }
 
+      // Successor elemanın ebeveyni currentNode'a eşitse successor currentNodu'un sağ çocuğudur
       if (successorParent === currentNode) {
         currentNode.data = successor.data
         currentNode.right = successor.right
@@ -148,6 +150,206 @@ class Tree {
     }
   }
 
+  find(value) {
+    let currentNode = this.root
+
+    // İstenen değere sahip node'u bul
+    while (currentNode && currentNode.data !== value) {
+      if (value < currentNode.data) {
+        currentNode = currentNode.left
+      } else {
+        currentNode = currentNode.right
+      }
+    }
+
+    if (currentNode) {
+      return currentNode
+    } else {
+      return false
+    }
+  }
+
+  levelOrderForEach(callback) {
+
+    // callback parametresi tanımlı mı ve bir fonksiyon mu ?
+    if (typeof callback !== "function") {
+      throw new Error("levelOrderForEach metodu için bir callback fonksiyonu gereklidir.")
+    }
+
+    // Ağacın kökü yoksa yani ağaç boşsa çık
+    if (!this.root) {
+      return
+    }
+
+    const queue = []
+
+    queue.push(this.root)
+
+    while(queue.length !== 0) {
+      let currentNode = queue.shift()
+      callback(currentNode)
+      
+      if (currentNode.left) {
+        queue.push(currentNode.left)
+      } 
+      if (currentNode.right) {
+        queue.push(currentNode.right)
+      }
+    }
+  }
+
+  preOrderForEach(callback) {
+
+    // callback parametresi tanımlı mı ve bir fonksiyon mu ?
+    if (typeof callback !== "function") {
+      throw new Error("levelOrderForEach metodu için bir callback fonksiyonu gereklidir.")
+    }
+
+    // Ağacın kökü yoksa yani ağaç boşsa çık
+    if (!this.root) {
+      return
+    }
+
+    const preOrderRecur = (node) => {
+
+      if (node === null) {
+        return
+      }
+
+      callback(node)
+
+      preOrderRecur(node.left)
+      preOrderRecur(node.right)
+    }
+
+    preOrderRecur(this.root)
+  }
+
+  inOrderForEach(callback) {
+
+    // callback parametresi tanımlı mı ve bir fonksiyon mu ?
+    if (typeof callback !== "function") {
+      throw new Error("levelOrderForEach metodu için bir callback fonksiyonu gereklidir.")
+    }
+
+    // Ağacın kökü yoksa yani ağaç boşsa çık
+    if (!this.root) {
+      return
+    }
+
+    const inOrderRecur = (node) => {
+
+      if (node === null) {
+        return
+      }
+
+      inOrderRecur(node.left)
+      callback(node)
+      inOrderRecur(node.right)
+    }
+
+    inOrderRecur(this.root)
+  }
+
+  postOrderForEach(callback) {
+
+    // callback parametresi tanımlı mı ve bir fonksiyon mu ?
+    if (typeof callback !== "function") {
+      throw new Error("levelOrderForEach metodu için bir callback fonksiyonu gereklidir.")
+    }
+
+    // Ağacın kökü yoksa yani ağaç boşsa çık
+    if (!this.root) {
+      return
+    }
+
+    const postOrderRecur = (node) => {
+
+      if (node === null) {
+        return
+      }
+
+      inOrderRecur(node.left)
+      inOrderRecur(node.right)
+      callback(node)
+    }
+
+    postOrderRecur(this.root)
+  }
+
+  height(value) {
+    let currentNode = this.root
+
+    // Uzunluğu hesaplanacak değeri bulma
+    while (currentNode && currentNode.data !== value) {
+      if (value < currentNode.data) {
+        currentNode = currentNode.left
+      } else {
+        currentNode = currentNode.right
+      }
+    }
+
+    // Değer ağaçta yoksa null dön
+    if (!currentNode) {
+      return null
+    }
+
+    // Uzunluğu hesaplanacak değerin sağ ve sol çocuklarının uzunluğunu bul ve büyük olanı dön
+    const heightRecur = (node) => {
+
+      if (!node) {
+        return -1
+      }
+
+      const leftHeight = heightRecur(node.left)
+      const rightHeight = heightRecur(node.right)
+
+      return 1 + Math.max(leftHeight, rightHeight)
+    }
+
+    return heightRecur(currentNode)
+  }
+
+  depth(value) {
+    let currentNode = this.root
+    let depthCount = 0
+
+    // Değeri bulana kadar ağaçta gez ve depthCount 1 arttır
+    while (currentNode && currentNode.data !== value) {
+      if (value < currentNode.data) {
+        currentNode = currentNode.left
+        depthCount += 1
+      } else {
+        currentNode = currentNode.right
+        depthCount +=1
+      }
+    }
+
+    // Değer yoksa null dön değer bulunduysa derinliğini dön
+    if (!currentNode) {
+      return null
+    } else {
+      return depthCount
+    }
+  }
+
+  isBalanced() {
+    const root = this.root
+
+    const isBalancedRecur = (node) => {
+      
+      if (!node) {
+        return -1
+      }
+
+      const leftHeight = isBalancedRecur(node.left)
+      const rightHeight = isBalancedRecur(node.right)
+
+      // En son burada kaldın
+    }
+
+    return isBalancedRecur(root)
+  }
 }
 
 function buildTreeRecur(arr, start, end) {
