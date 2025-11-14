@@ -269,8 +269,8 @@ class Tree {
         return
       }
 
-      inOrderRecur(node.left)
-      inOrderRecur(node.right)
+      postOrderRecur(node.left)
+      postOrderRecur(node.right)
       callback(node)
     }
 
@@ -337,18 +337,45 @@ class Tree {
     const root = this.root
 
     const isBalancedRecur = (node) => {
-      
+
+      // Durma koşulu: değer null ise -1 dön
       if (!node) {
         return -1
       }
 
+      // Sağ ve sol ağacın yüksekliğini özyinelemeli olarak bul
       const leftHeight = isBalancedRecur(node.left)
       const rightHeight = isBalancedRecur(node.right)
 
-      // En son burada kaldın
+      // Sağ veya sol ağaçtan eğer -2 değeri gelirse ağaçta bir dengesizlik bulunmuştur bundan dolayı hızlı bir şekilde fonksiyondan çıkmak gerekir
+      if (leftHeight === -2 || rightHeight === -2) {
+        return -2
+      }
+
+      // Ağaçların boy farkını bul
+      const heightDifference = Math.abs(leftHeight - rightHeight)
+
+      if (heightDifference > 1) {
+        return -2
+      } else {
+        return 1 + Math.max(leftHeight, rightHeight)
+      }
     }
 
-    return isBalancedRecur(root)
+    return isBalancedRecur(root) !== -2
+  }
+
+  rebalance() {
+
+    // 1.Kısım: Düzleştirme 
+    const sortedNodes = []
+
+    this.inOrderForEach((node) => {
+      sortedNodes.push(node.data)
+    })
+
+    // 2.Kısım: Yeniden inşa etme
+    this.root = buildTree(sortedNodes)
   }
 }
 
