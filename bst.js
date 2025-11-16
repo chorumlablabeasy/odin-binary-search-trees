@@ -398,3 +398,5 @@ function buildTree(arr) {
 
   return buildTreeRecur(sortedUniq, 0, sortedUniq.length - 1)
 }
+
+export { Tree }
